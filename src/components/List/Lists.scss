@@ -1,0 +1,110 @@
+.mainList {
+    background-color: white;
+    border-radius: 15px;
+    margin-top: 35px;
+    margin-bottom: 35px;
+    padding: 15px;
+  
+    .firstList {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+  
+      .subfirstList {
+        gap: 10px;
+  
+        .propertyPara {
+          color: #001B79;
+          font-family: Poppins;
+          font-size: 14px;
+          font-weight: 500;
+        }
+  
+        .statisList {
+          font-size: 10px;
+          padding-left: 10px;
+          font-weight: 400;
+        }
+  
+        .secondpropertyPara {
+          color: #667085;
+          font-size: 13px;
+          font-weight: 400;
+          font-family: Poppins;
+          line-height: 14px;
+        }
+      }
+  
+      .secondList {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+  
+        .deleteButton {
+          display: flex;
+          align-items: center; /* Vertically center the text and icon */
+          justify-content: center;
+          gap: 5px;
+          padding: 5px 15px;
+          border: 2px solid #001B79;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s ease, color 0.3s ease;
+  
+          &:hover {
+            background-color: #fff;
+            color: #001B79;
+          }
+  
+          .iconDelete {
+            color: #001B79; /* Will change based on hover */
+            font-size: 20px;
+            vertical-align: middle; /* Ensures better alignment with the text */
+          }
+  
+          .deletetext {
+            color: #001B79; /* Will change based on hover */
+            font-weight: 500;
+            font-size: 14px;
+            font-family: Poppins;
+            line-height: 1; /* Makes sure text doesn't overflow vertically */
+          }
+        }
+  
+        .addButton {
+          display: flex;
+          align-items: center; /* Vertically center the text and icon */
+          justify-content: center;
+          gap: 5px;
+          padding: 5px 15px;
+          background-color: #001B79;
+          color: white;
+          border: 2px solid #001B79;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s ease, color 0.3s ease;
+  
+          &:hover {
+            background-color: #fff;
+            color: #001B79;
+          }
+  
+          .iconAdd {
+            color: inherit; /* Will change based on hover */
+            font-size: 20px;
+            vertical-align: middle; /* Ensures better alignment with the text */
+          }
+  
+          .addtext {
+            color: inherit; /* Will change based on hover */
+            font-weight: 500;
+            font-size: 14px;
+            font-family: Poppins;
+            line-height: 1;
+          }
+        }
+      }
+    }
+  }
+  

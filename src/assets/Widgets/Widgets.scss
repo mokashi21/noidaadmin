@@ -1,0 +1,60 @@
+.mainWidget {
+    display: flex;
+    justify-content: space-between ;
+    width: 100%;
+    gap: 32px;
+    
+    .widgetContainer {
+      width: 22%; /* Ensures all widgets have the same fixed width */
+      padding-left: 12px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+
+      .widgetTitle {
+        color: #161E54;
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 24px;
+      }
+      .widgetData {
+        color: #161E54;
+        font-weight: 600;
+        font-size: 22px;
+        line-height: 24px;
+      }
+      .widgetDesc {
+        color: gray;
+        font-weight: 400;
+        font-size: 17px;
+        line-height: 24px;
+      }
+  
+  
+  
+     
+   
+    }
+  
+    /* Background colors for each widget */
+    .widget-1 {
+      background-color: #C8D7FF75; /* First widget */
+      border: 1px solid #456FFF4D;
+    }
+  
+    .widget-2 {
+      background-color: #C9FFC875; /* Second widget */
+      border: 1px solid #82FE57A1;
+    }
+  
+    .widget-3 {
+      background-color: #FFC8DF75; /* Third widget */
+      border:  1px solid #FFAEF7;
+
+    }
+  
+    .widget-4 {
+      background-color: #FFF9C875; /* Fourth widget */
+      border: 1px solid #EFCE5B ;
+    }
+  }
+  
