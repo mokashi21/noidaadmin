@@ -1,87 +1,137 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Lists.scss";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import AddIcon from "@mui/icons-material/Add";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { Link } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
-
-// Updated columns with the requested headers
-const columns = [
-  { field: "ownerName", headerName: "Owner Name", width: 175 },
-  { field: "propertyName", headerName: "Property Name", width: 175 },
-  { field: "totalUnits", headerName: "Total Units", width: 175 },
-  { field: "vacantUnits", headerName: "Vacant Units", width: 175 },
-  { field: "occupancyRate", headerName: "Occupancy Rate", width: 175 },
-  {
-    field: "lastMaintenanceDate",
-    headerName: "Last Maintenance Date",
-    width: 175,
-  },
-];
-
-// Example row data with 6 entries
-const rows = [
-  {
-    id: 1,
-    ownerName: "John Snow",
-    propertyName: "Winterfell Tower",
-    totalUnits: 50,
-    vacantUnits: 5,
-    occupancyRate: "90%",
-    lastMaintenanceDate: "2024-09-10",
-  },
-  {
-    id: 2,
-    ownerName: "Cersei Lannister",
-    propertyName: "Red Keep Apartments",
-    totalUnits: 100,
-    vacantUnits: 20,
-    occupancyRate: "80%",
-    lastMaintenanceDate: "2024-08-15",
-  },
-  {
-    id: 3,
-    ownerName: "Jaime Lannister",
-    propertyName: "Kings Landing Estates",
-    totalUnits: 75,
-    vacantUnits: 10,
-    occupancyRate: "87%",
-    lastMaintenanceDate: "2024-07-20",
-  },
-  {
-    id: 4,
-    ownerName: "Arya Stark",
-    propertyName: "Faceless Mansions",
-    totalUnits: 40,
-    vacantUnits: 2,
-    occupancyRate: "95%",
-    lastMaintenanceDate: "2024-09-05",
-  },
-  {
-    id: 5,
-    ownerName: "Tyrion Lannister",
-    propertyName: "Hand of the King Estates",
-    totalUnits: 65,
-    vacantUnits: 7,
-    occupancyRate: "89%",
-    lastMaintenanceDate: "2024-08-25",
-  },
-  {
-    id: 6,
-    ownerName: "Sansa Stark",
-    propertyName: "Eyrie Heights",
-    totalUnits: 30,
-    vacantUnits: 3,
-    occupancyRate: "90%",
-    lastMaintenanceDate: "2024-08-30",
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProperties, deleteProperty } from "../../redux/propertiesSlice";
+import { CircularProgress, Snackbar, Alert, IconButton, Button } from "@mui/material";
 
 const List = () => {
+  const dispatch = useDispatch();
+  const { properties, loading, error } = useSelector((state) => state.properties);
+  const [selectionModel, setSelectionModel] = useState([]);
+  const [data, setData] = useState([]); 
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  useEffect(() => {
+    dispatch(fetchProperties());
+
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      setSnackbarMessage(error);
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+    }
+  }, [error]);
+
+  const handleDelete = (id) => {
+    if (!window.confirm("Are you sure you want to delete this property?")) {
+      return;
+    }
+
+    dispatch(deleteProperty(id))
+      .unwrap()
+      .then(() => {
+        setData((prevData) => prevData.filter((item) => item.id !== id));
+        setSnackbarMessage("Property deleted successfully.");
+        setSnackbarSeverity("success");
+        setOpenSnackbar(true);
+      })
+      .catch((err) => {
+        let errorMessage = "Failed to delete the property.";
+        if (err && typeof err === "object" && err.message) {
+          errorMessage = err.message;
+        }
+        setSnackbarMessage(errorMessage);
+        setSnackbarSeverity("error");
+        setOpenSnackbar(true);
+      });
+  };
+
+  const handleBulkDelete = () => {
+    if (selectionModel.length === 0) {
+      setSnackbarMessage("No properties selected for deletion.");
+      setSnackbarSeverity("warning");
+      setOpenSnackbar(true);
+      return;
+    }
+    if (!window.confirm("Are you sure you want to delete the selected properties?")) {
+      return;
+    }
+    Promise.all(
+      selectionModel.map((id) => dispatch(deleteProperty(id)).unwrap())
+    )
+      .then(() => {
+        setSnackbarMessage("Selected properties deleted successfully.");
+        setSnackbarSeverity("success");
+        setOpenSnackbar(true);
+        setSelectionModel([]); 
+      })
+      .catch((err) => {
+        let errorMessage = "Failed to delete some properties.";
+        if (err && typeof err === "object" && err.message) {
+          errorMessage = err.message;
+        }
+        setSnackbarMessage(errorMessage);
+        setSnackbarSeverity("error");
+        setOpenSnackbar(true);
+      });
+  };
+  const columns = [
+    { field: "owner_name", headerName: "Owner Name", width: 150 },
+    { field: "property_name", headerName: "Property Name", width: 150 },
+    { field: "total_units", headerName: "Total Units", width: 130, type: "number" },
+    { field: "vacant_units", headerName: "Vacant Units", width: 130, type: "number" },
+    { field: "occupancy_rate", headerName: "Occupancy Rate", width: 150 },
+    {
+      field: "last_maintenance_date",
+      headerName: "Last Maintenance Date",
+      width: 180,
+      type: "date",
+      valueGetter: (params) => new Date(params.value),
+      valueFormatter: (params) =>
+        params.value
+          ? new Date(params.value).toLocaleDateString()
+          : "",
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 100,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => {
+        return (
+          <IconButton
+            color="error"
+            onClick={() => handleDelete(params.row.id)}
+          >
+            <DeleteForeverIcon />
+          </IconButton>
+        );
+      },
+    },
+  ];
+  const rows = properties.map((property) => ({
+    id: property._id,
+    owner_name: property.owner_name,
+    property_name: property.property_name,
+    total_units: property.total_units,
+    vacant_units: property.vacant_units,
+    occupancy_rate: property.occupancy_rate,
+    last_maintenance_date: property.last_maintenance_date,
+  }));
+  console.log("rows",rows)
+
   return (
     <div className="mainList">
-      {/* first section */}
       <div className="firstList">
         <div className="subfirstList">
           <p className="propertyPara">
@@ -92,62 +142,101 @@ const List = () => {
         </div>
 
         <div className="secondList">
-          <p className="deleteButton">
-            <Link style={{ textDecoration: "none" }}>
-              <DeleteForeverIcon className="iconDelete" />
-              <span className="deletetext">Delete</span>
-            </Link>
+          <p
+            className="deleteButton"
+            onClick={() => handleDelete(selectionModel[0])}
+            style={{ cursor: "pointer", marginRight: '10px' }}
+          >
+            <DeleteForeverIcon className="iconDelete" />
+            <span className="deletetext">Delete</span>
           </p>
-
-          <p className="addButton">
-            <AddIcon className="iconAdd" />
-            <span className="addtext">Add</span>
-          </p>
+          <Link to="/create-new-property-data" style={{ textDecoration: "none" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+            >
+              Add
+            </Button>
+          </Link>
         </div>
       </div>
-
-      {/* table */}
-      <div>
-        <Paper sx={{ height: 400, width: "100%" }}>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            checkboxSelection
-            hideFooter
-            sx={{
-              border: 0,
-              "& .MuiDataGrid-columnHeaders": {
-                backgroundColor: "#F9F9F9", // Header background color
-                color: "#101828", // Header text color
-                fontFamily: "Poppins",
-                fontWeight: 500,
-                fontSize: "12px",
-                lineHeight: "12px",
-                textAlign: "left",
-              },
-              "& .MuiDataGrid-columnHeaderTitle": {
-                textAlign: "left", // Align header text left
-              },
-              "& .MuiDataGrid-cell": {
-                backgroundColor: "#FFFFFF", // Cell background color
-                color: "#667085", // Cell text color
-                fontFamily: "Poppins",
-                fontWeight: 400,
-                fontSize: "12px",
-                lineHeight: "14.36px",
-                textAlign: "left",
-                paddingTop: "15px",
-              },
-              "& .MuiDataGrid-row:hover": {
-                backgroundColor: "#E5E5E5", 
-              },
-              "& .MuiCheckbox-root": {
-                color: "#001B79", // Checkbox color
-              },
+      <div style={{ height: 500, width: "100%" }}>
+      
+        {loading ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
             }}
-          />
-        </Paper>
+          >
+            <CircularProgress />
+          </div>
+        ) : (
+          <Paper sx={{ height: "100%", width: "100%" }}>
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              checkboxSelection
+              hideFooter={false}
+              pageSize={10}
+              rowsPerPageOptions={[10, 20, 50]}
+              onSelectionModelChange={(newSelection) => {
+                setSelectionModel(newSelection);
+              }}
+              selectionModel={selectionModel}
+              disableSelectionOnClick
+              sx={{
+                border: 0,
+                "& .MuiDataGrid-columnHeaders": {
+                  backgroundColor: "#F9F9F9",
+                  color: "#101828",
+                  fontFamily: "Poppins",
+                  fontWeight: 500,
+                  fontSize: "12px",
+                  lineHeight: "12px",
+                  textAlign: "left",
+                },
+                "& .MuiDataGrid-columnHeaderTitle": {
+                  textAlign: "left",
+                },
+                "& .MuiDataGrid-cell": {
+                  backgroundColor: "#FFFFFF",
+                  color: "#667085",
+                  fontFamily: "Poppins",
+                  fontWeight: 400,
+                  fontSize: "12px",
+                  lineHeight: "14.36px",
+                  textAlign: "left",
+                  paddingTop: "15px",
+                },
+                "& .MuiDataGrid-row:hover": {
+                  backgroundColor: "#E5E5E5",
+                },
+                "& .MuiCheckbox-root": {
+                  color: "#001B79",
+                },
+              }}
+            />
+          </Paper>
+        )}
       </div>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

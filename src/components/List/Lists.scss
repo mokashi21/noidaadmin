@@ -43,7 +43,7 @@
   
         .deleteButton {
           display: flex;
-          align-items: center; /* Vertically center the text and icon */
+          align-items: center;
           justify-content: center;
           gap: 5px;
           padding: 5px 15px;
@@ -58,23 +58,23 @@
           }
   
           .iconDelete {
-            color: #001B79; /* Will change based on hover */
+            color: #001B79; 
             font-size: 20px;
-            vertical-align: middle; /* Ensures better alignment with the text */
+            vertical-align: middle; 
           }
   
           .deletetext {
-            color: #001B79; /* Will change based on hover */
+            color: #001B79; 
             font-weight: 500;
             font-size: 14px;
             font-family: Poppins;
-            line-height: 1; /* Makes sure text doesn't overflow vertically */
+            line-height: 1; 
           }
         }
   
         .addButton {
           display: flex;
-          align-items: center; /* Vertically center the text and icon */
+          align-items: center;
           justify-content: center;
           gap: 5px;
           padding: 5px 15px;
@@ -91,13 +91,13 @@
           }
   
           .iconAdd {
-            color: inherit; /* Will change based on hover */
+            color: inherit; 
             font-size: 20px;
-            vertical-align: middle; /* Ensures better alignment with the text */
+            vertical-align: middle; 
           }
   
           .addtext {
-            color: inherit; /* Will change based on hover */
+            color: inherit; 
             font-weight: 500;
             font-size: 14px;
             font-family: Poppins;

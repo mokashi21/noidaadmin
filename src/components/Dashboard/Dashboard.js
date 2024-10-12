@@ -4,6 +4,7 @@ import Sidebar from "../Sidebar/Sidebar";
 import Navbar from "../Navbar/Navbar";
 import Widgets from '../../assets/Widgets/Widgets';
 import List from '../List/List';
+import Financial from '../Financial/Financial';
 
 
 const Home = () => {
@@ -18,6 +19,7 @@ const Home = () => {
         </div>
         <div className='createDash' >
           <List />
+          <Financial />
         </div>
         </div>
     </div>
